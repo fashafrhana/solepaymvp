@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SOLEPAY MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #ede3ff, #f5eaff);
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      padding: 30px 20px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e1e1e;
+      margin-bottom: 15px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    select, label, input[type="checkbox"] {
+      font-size: 16px;
+    }
+    select {
+      padding: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .toggle {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    button {
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      background-color: #00c46a;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 196, 106, 0.5);
+      transition: all 0.3s ease;
+      animation: pulse 1.5s infinite;
+    }
+    button:hover {
+      background-color: #00a75a;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+    }
+    .badge {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: #f2f2f2;
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px rgba(0, 196, 106, 0.4); }
+      50% { box-shadow: 0 0 20px rgba(0, 196, 106, 0.7); }
+      100% { box-shadow: 0 0 10px rgba(0, 196, 106, 0.4); }
+    }
+    .progress-container {
+      margin-top: 25px;
+      text-align: left;
+    }
+    .progress-bar {
+      height: 16px;
+      width: 100%;
+      background-color: #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #00c46a;
+      transition: width 0.4s ease;
+    }
+    .goal-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">SOLEPAY</div>
+    <h1>👟 Step to Pay</h1>
+
+    <select id="wallet">
+      <option value="Touch 'n Go eWallet">Touch 'n Go eWallet</option>
+      <option value="GrabPay">GrabPay</option>
+      <option value="Boost">Boost</option>
+    </select>
+
+    <div class="toggle">
+      <input type="checkbox" id="donate" />
+      <label for="donate">Round up RM0.35 to support ocean cleanup 🌊</label>
+    </div>
+
+    <button onclick="makePayment()">Step Here</button>
+
+    <div class="progress-container">
+      <div class="goal-text">Steps: <span id="stepCount">0</span> / 1000</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div id="goalMessage" style="margin-top: 8px; font-size: 14px; color: #00a75a;"></div>
+    </div>
+
+    <div class="message" id="status"></div>
+  </div>
+
+  <script>
+    let steps = 0;
+    const stepCount = document.getElementById("stepCount");
+    const progressFill = document.getElementById("progressFill");
+    const goalMessage = document.getElementById("goalMessage");
+
+    function updateStepProgress() {
+      steps += 100;
+      if (steps > 1000) steps = 1000;
+      stepCount.textContent = steps;
+      const progress = (steps / 1000) * 100;
+      progressFill.style.width = progress + "%";
+
+      if (steps >= 1000) {
+        goalMessage.textContent = "🎉 You’ve unlocked your eco goal!";
+      }
+    }
+
+    function makePayment() {
+      const status = document.getElementById("status");
+      const wallet = document.getElementById("wallet").value;
+      const donate = document.getElementById("donate").checked;
+      const today = new Date();
+      const ref = "TXN-" + today.getFullYear()
+                   + String(today.getMonth() + 1).padStart(2, '0')
+                   + String(today.getDate()).padStart(2, '0')
+                   + "-" + Math.floor(1000 + Math.random() * 9000);
+
+      status.innerHTML = "🔄 Connecting to SOLENET...";
+      updateStepProgress();
+
+      setTimeout(() => {
+        status.innerHTML = `🚀 Routing via ${wallet}...`;
+
+        setTimeout(() => {
+          let msg = `
+            ✅ Payment of RM15 completed!<br>
+            🪙 Paid from: ${wallet}<br>
+            📎 Ref: ${ref}<br><br>
+            🌱 <strong>Estimated Carbon Impact:</strong> 0.6kg CO₂<br>
+            💚 <strong>Supports:</strong> Local reforestation<br>
+          `;
+
+          if (donate) {
+            msg += `🎁 <strong>RM0.35 donated to ocean cleanup initiative 🌊</strong><br>`;
+          }
+
+          msg += `<div class="badge">🌟 Impact Level: Everyday Eco Hero</div>`;
+          status.innerHTML = msg;
+        }, 1500);
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
